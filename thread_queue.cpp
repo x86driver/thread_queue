@@ -2,6 +2,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <iterator>
+#include <algorithm>
 #include "thread_queue.hpp"
 
 template <typename T>
@@ -17,6 +19,12 @@ void Queue<T>::push(const T &value)
 
     q.push(value);
     condition.signal();
+}
+
+template <typename T>
+void Queue<T>::push_back(const T &value)
+{
+    push(value);
 }
 
 template <typename T>
@@ -84,12 +92,26 @@ int main()
 
     srand(time(0));
 
+    /*
     pthread_create(&tid1, NULL, thread1, &queue);
     pthread_create(&tid2, NULL, thread2, &queue);
 
     pthread_join(tid1, NULL);
     pthread_join(tid2, NULL);
+    */
+
+    uint8_t buf[10];
+    for (int i = 0; i < sizeof(buf); ++i) {
+        buf[i] = i;
+    }
+    std::copy(&buf[0], &buf[10], std::back_inserter(queue));
 
     printf("size: %u\n", queue.size());
+
+    for (int i = 0; i < sizeof(buf); ++i) {
+        printf("%d\n", queue.front());
+        queue.pop();
+    }
+
     return 0;
 }
