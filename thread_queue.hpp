@@ -7,6 +7,7 @@
 using std::queue;
 using android::Mutex;
 using android::AutoMutex;
+using android::Condition;
 
 template <typename T>
 class Queue {
@@ -19,6 +20,7 @@ public:
     typename queue<T>::reference front();
 private:
     mutable Mutex mLock;
+    Condition condition;
     queue<T> q;
 };
 
